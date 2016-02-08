@@ -64,7 +64,7 @@ const ActiveEdgeList freshAEL(){
 static LinkN* makeLink(Point **e, Primitive *p, bool s);
 #define makeLinkEZ(e, p) makeLink(e,p,false)
 
-static int leftToRightF(EdgeListEntry *, EdgeListEntry *, int *);
+static int8_t leftToRightF(const EdgeListEntry *, const EdgeListEntry *, int *);
 
 void stepEdges(ActiveEdgeList *ael, const rb_red_blk_tree* activePrims){
 	static int scanLine;
@@ -144,7 +144,7 @@ LinkN* makeLink(Point **e, Primitive *p, bool s){
 	return newLink;
 }
 
-int leftToRightF(EdgeListEntry *o1, EdgeListEntry *o2, int *scanLine){
+int8_t leftToRightF(const EdgeListEntry *o1, const EdgeListEntry *o2, int *scanLine){
 	float delta = getSmartXForLine(o1, *scanLine) - getSmartXForLine(o2, *scanLine);
 #ifndef NDEBUG
 	Point **const e1 = o1->edge,
