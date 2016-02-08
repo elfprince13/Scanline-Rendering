@@ -97,8 +97,6 @@
 		E9650D181C693A2200D381AF /* debugConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debugConfig.h; sourceTree = "<group>"; };
 		E9650D1A1C693A2200D381AF /* linklist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = linklist.c; sourceTree = "<group>"; };
 		E9650D1B1C693A2200D381AF /* linklist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = linklist.h; sourceTree = "<group>"; };
-		E9650D1D1C693A2200D381AF /* CHANGES */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CHANGES; sourceTree = "<group>"; };
-		E9650D1E1C693A2200D381AF /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		E9650D1F1C693A2200D381AF /* red_black_tree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = red_black_tree.c; sourceTree = "<group>"; };
 		E9650D201C693A2200D381AF /* red_black_tree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = red_black_tree.h; sourceTree = "<group>"; };
 		E9650D211C693A2200D381AF /* util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = util.c; sourceTree = "<group>"; };
@@ -194,8 +192,6 @@
 		E9650D1C1C693A2200D381AF /* rb_tree */ = {
 			isa = PBXGroup;
 			children = (
-				E9650D1D1C693A2200D381AF /* CHANGES */,
-				E9650D1E1C693A2200D381AF /* LICENSE */,
 				E9650D1F1C693A2200D381AF /* red_black_tree.c */,
 				E9650D201C693A2200D381AF /* red_black_tree.h */,
 			);
