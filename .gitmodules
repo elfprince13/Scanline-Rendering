@@ -1,3 +1,6 @@
 [submodule "ScanLineRender/toolchain"]
 	path = ScanLineRender/toolchain
 	url = https://github.com/CE-Programming/toolchain.git
+[submodule "ScanLineRender/CE-Algorithms"]
+	path = ScanLineRender/CE-Algorithms
+	url = https://github.com/elfprince13/CE-Algorithms.git

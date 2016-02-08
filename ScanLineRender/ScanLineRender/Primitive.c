@@ -9,7 +9,7 @@
 #include "Primitive.h"
 #include <math.h>
 #include <string.h>
-#include "rb_tree/misc.h"
+#include "util.h"
 
 void makeLine(Primitive *o, Color c, const Edge e){
 	Primitive tmp;

@@ -3,6 +3,7 @@ CEDEV ?= ..\toolchain\CEdev
 CEDEV := $(call REALWINPATH,$(CEDEV))
 BIN = $(CEDEV)\bin
 INCLUDE = $(CEDEV)\include
+CEALGOS ?= ../CE-Algorithms/src
 
 TARGET ?= scanln
 
@@ -11,7 +12,7 @@ LD = @ "$(BIN)\eZ80link"
 CV = @ "$(BIN)\convhex"
 RM = del /f
 
-SOURCES = $(wildcard *.c) $(subst /,\,$(wildcard */*.c))
+SOURCES = $(wildcard *.c) $(subst /,\,$(wildcard $(CEALGOS)/*.c)) $(subst /,\,$(wildcard $(CEALGOS)/*/*.c))
 ASMSOURCES = $(wildcard *.asm)
 OBJECTS = $(SOURCES:%.c=%.obj) $(ASMSOURCES:%.asm=%.obj)
 
@@ -25,7 +26,7 @@ ASM_FLAGS = \
 
 CFLAGS =  \
 	-quiet -define:_EZ80190 -define:_EZ80 -define:NDEBUG -define:_SIMULATE -NOlistinc -NOmodsect -cpu:eZ80190 -keepasm \
-	-optspeed -NOreduceopt -NOgenprintf -stdinc:"$(HEADERS)" -usrinc:"." -NOdebug \
+-optspeed -NOreduceopt -NOgenprintf -stdinc:"$(HEADERS)" -usrinc:".;$(call REALWINPATH,$(CEALGOS))" -NOdebug \
 	-asmsw:"$(ASM_FLAGS)" -asm $(ASMSOURCES)
 
 LDFLAGS += GROUP MEMORY = ROM, RAM
