@@ -34,6 +34,9 @@
 		E9650D281C693A3700D381AF /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = E9650D211C693A2200D381AF /* util.c */; };
 		E9650D291C693A3B00D381AF /* linklist.c in Sources */ = {isa = PBXBuildFile; fileRef = E9650D1A1C693A2200D381AF /* linklist.c */; };
 		E9650D2A1C693A4100D381AF /* red_black_tree.c in Sources */ = {isa = PBXBuildFile; fileRef = E9650D1F1C693A2200D381AF /* red_black_tree.c */; };
+		E9650D3B1C69522F00D381AF /* libcealgorithms.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E9650D0F1C693A0600D381AF /* libcealgorithms.a */; };
+		E9650D3C1C69522F00D381AF /* libnetpbm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E9820ADB1C5AC05200ACCF82 /* libnetpbm.a */; };
+		E9650D421C69527B00D381AF /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = E9650D2B1C69520300D381AF /* main.c */; };
 		E9820ADC1C5AC05200ACCF82 /* libnetpbm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E9820ADB1C5AC05200ACCF82 /* libnetpbm.a */; };
 		E9BF95431C62911D003CDECC /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = E93B368C1C56CB1300A88A02 /* main.c */; };
 /* End PBXBuildFile section */
@@ -60,10 +63,26 @@
 			remoteGlobalIDString = E9650D0E1C693A0600D381AF;
 			remoteInfo = cealgorithms;
 		};
+		E9650D301C69522F00D381AF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E93B36811C56CB1300A88A02 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E9650D0E1C693A0600D381AF;
+			remoteInfo = cealgorithms;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		E93B36871C56CB1300A88A02 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		E9650D3D1C69522F00D381AF /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -101,6 +120,8 @@
 		E9650D201C693A2200D381AF /* red_black_tree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = red_black_tree.h; sourceTree = "<group>"; };
 		E9650D211C693A2200D381AF /* util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = util.c; sourceTree = "<group>"; };
 		E9650D221C693A2200D381AF /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = util.h; sourceTree = "<group>"; };
+		E9650D2B1C69520300D381AF /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = main.c; path = "CE-Algorithms/tests/main.c"; sourceTree = "<group>"; };
+		E9650D411C69522F00D381AF /* AlgosTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AlgosTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9820ADB1C5AC05200ACCF82 /* libnetpbm.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libnetpbm.a; path = ../../../../../../opt/local/lib/libnetpbm.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -121,12 +142,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E9650D3A1C69522F00D381AF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9650D3B1C69522F00D381AF /* libcealgorithms.a in Frameworks */,
+				E9650D3C1C69522F00D381AF /* libnetpbm.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		E93B36801C56CB1300A88A02 = {
 			isa = PBXGroup;
 			children = (
+				E9650D2D1C69521100D381AF /* Algos-Test */,
 				E9650D161C693A2200D381AF /* CE-Algorithms */,
 				E9820ADB1C5AC05200ACCF82 /* libnetpbm.a */,
 				E93B368B1C56CB1300A88A02 /* ScanLineRender */,
@@ -139,6 +170,7 @@
 			children = (
 				E93B36891C56CB1300A88A02 /* ScanLineRender */,
 				E9650D0F1C693A0600D381AF /* libcealgorithms.a */,
+				E9650D411C69522F00D381AF /* AlgosTest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -196,6 +228,14 @@
 				E9650D201C693A2200D381AF /* red_black_tree.h */,
 			);
 			path = rb_tree;
+			sourceTree = "<group>";
+		};
+		E9650D2D1C69521100D381AF /* Algos-Test */ = {
+			isa = PBXGroup;
+			children = (
+				E9650D2B1C69520300D381AF /* main.c */,
+			);
+			name = "Algos-Test";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -263,6 +303,24 @@
 			productReference = E9650D0F1C693A0600D381AF /* libcealgorithms.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		E9650D2E1C69522F00D381AF /* AlgosTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E9650D3E1C69522F00D381AF /* Build configuration list for PBXNativeTarget "AlgosTest" */;
+			buildPhases = (
+				E9650D311C69522F00D381AF /* Sources */,
+				E9650D3A1C69522F00D381AF /* Frameworks */,
+				E9650D3D1C69522F00D381AF /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E9650D2F1C69522F00D381AF /* PBXTargetDependency */,
+			);
+			name = AlgosTest;
+			productName = ScanLineRender;
+			productReference = E9650D411C69522F00D381AF /* AlgosTest */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -302,6 +360,7 @@
 				E93DF98D1C6511E500063228 /* scanln.8xp */,
 				E9650D001C69198400D381AF /* scanline-all */,
 				E9650D0E1C693A0600D381AF /* cealgorithms */,
+				E9650D2E1C69522F00D381AF /* AlgosTest */,
 			);
 		};
 /* End PBXProject section */
@@ -333,6 +392,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E9650D311C69522F00D381AF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9650D421C69527B00D381AF /* main.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -350,6 +417,11 @@
 			isa = PBXTargetDependency;
 			target = E9650D0E1C693A0600D381AF /* cealgorithms */;
 			targetProxy = E9650D131C693A0F00D381AF /* PBXContainerItemProxy */;
+		};
+		E9650D2F1C69522F00D381AF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E9650D0E1C693A0600D381AF /* cealgorithms */;
+			targetProxy = E9650D301C69522F00D381AF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -550,6 +622,52 @@
 			};
 			name = Release;
 		};
+		E9650D3F1C69522F00D381AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				GCC_C_LANGUAGE_STANDARD = ansi;
+				HEADER_SEARCH_PATHS = /opt/local/include;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
+				OTHER_CFLAGS = (
+					"-pedantic",
+					"-ansi",
+					"-Werror=declaration-after-statement",
+					"-Werror=implicit-function-declaration",
+					"-Werror=missing-prototypes",
+					"-Werror=return-type",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/CE-Algorithms/src";
+			};
+			name = Debug;
+		};
+		E9650D401C69522F00D381AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				GCC_C_LANGUAGE_STANDARD = ansi;
+				HEADER_SEARCH_PATHS = /opt/local/include;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
+				OTHER_CFLAGS = (
+					"-pedantic",
+					"-ansi",
+					"-Werror=declaration-after-statement",
+					"-Werror=implicit-function-declaration",
+					"-Werror=missing-prototypes",
+					"-Werror=return-type",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/CE-Algorithms/src";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -595,6 +713,15 @@
 				E9650D121C693A0600D381AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+		};
+		E9650D3E1C69522F00D381AF /* Build configuration list for PBXNativeTarget "AlgosTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E9650D3F1C69522F00D381AF /* Debug */,
+				E9650D401C69522F00D381AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
