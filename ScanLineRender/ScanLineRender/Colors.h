@@ -13,10 +13,12 @@
 #include <stddef.h>
 #include "debugConfig.h"
 
-/* for LDraw-style palette, must be at least 18 bits.
- * this is valid on x86 and z80.
- * We can also use the 6 upper bits to store status flags. */
-typedef unsigned int Color;
+/* 
+ * Lower 9 bits for LDraw index
+ * Upper 7 bits for status flags.
+ */
+typedef uint16_t Color;
+
 typedef uint8_t PaletteRef;
 typedef uint16_t HardwareColor;
 
@@ -25,13 +27,15 @@ typedef PaletteConfigEntry* PaletteConfig;
 
 typedef HardwareColor* Palette;
 
+extern PaletteConfig activeConfig;
 void setPaletteConfig(const PaletteConfig);
 PaletteConfig getPaletteConfig(void);
+/*PaletteRef decodeColor(Color);*/
+#define decodeColor(c) activeConfig[((c) & 0x1ff)][0]
 
 void setActiveColor(Color);
 Color getActiveColor(void);
 
-PaletteRef decodeColor(Color);
 
 void setPalette(const Palette, size_t entries);
 Palette getPalette(void);

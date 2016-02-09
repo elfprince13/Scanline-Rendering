@@ -8,7 +8,7 @@
 
 #include "Colors.h"
 #include <stdbool.h>
-
+#include <string.h>
 
 #ifdef _EZ80
 static Palette activePalette = (Palette)0xE30200;
@@ -24,6 +24,10 @@ void setPalette(const Palette p, size_t entries){
 	}
 }
 
+PaletteConfig activeConfig = NULL;
+void setPaletteConfig(const PaletteConfig c){	activeConfig = c; }
+PaletteConfig getPaletteConfig(){	return activeConfig; }
+
 #ifndef NDEBUG
 const char * fmtColor(Color cc){
 	/* extra unsafe */
@@ -38,31 +42,8 @@ const char * fmtColor(Color cc){
 }
 #endif
 
-static PaletteConfig activeConfig = NULL;
-static Color activeColor = 0;
-
-void setPaletteConfig(const PaletteConfig c){	activeConfig = c; }
-PaletteConfig getPaletteConfig(){	return activeConfig; }
-
-void setActiveColor(Color c){ activeColor = c; }
-Color getActiveColor(){ return activeColor; }
-
-PaletteRef decodeColor(Color c){
-	const int nineBitMask = 0x1ff,
-	thirdBitMask = 0x8;
-	int ofs = c & nineBitMask;
-	bool compl;
-	PaletteRef ret;
-	if(ofs == 24 || ofs == 16){
-		bool compl = ofs & thirdBitMask;
-		ofs = (c >> 9) & nineBitMask;
-		if(ofs == 24 || ofs == 16){
-			compl = ofs & thirdBitMask;
-			ofs = activeColor;
-		}
-	} else {
-		compl = false;
-	}
-	ret = activeConfig[ofs][compl];
-	return ret;
+void setActiveColor(Color c){
+	memcpy(activeConfig[16],activeConfig[c & 0x1ff],sizeof(PaletteConfigEntry));
+	activeConfig[24][0] = activeConfig[16][1];
+	activeConfig[24][1] = activeConfig[16][0];
 }
