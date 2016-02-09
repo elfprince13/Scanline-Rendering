@@ -34,8 +34,8 @@ const char * fmtColor(Color cc){
 	static char buf[64];
 	const PaletteRef i = decodeColor(cc);
 	const HardwareColor c = activePalette[i];
-	const uint8_t r = (c >> 11) << 3,
-	g = ((c >> 5) & 0x3f) << 2,
+	const uint8_t r = (c >> 10) << 3,
+	g = ((c >> 5) & 0x1f) << 3,
 	b = (c & 0x1f) << 3;
 	sprintf(buf,"java.awt.Color[r=%d,g=%d,b=%d]",r,g,b);
 	return buf;
