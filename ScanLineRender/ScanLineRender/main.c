@@ -129,10 +129,11 @@ int main(int argc, const char * argv[]) {
 	memset(raster, decodeColor(WHITE), rasterByteCount);
 	render(raster, lineWidth, numLines, buckets);
 	buckets = teardownBuckets(buckets, numLines);
-#ifdef _EZ80
-	_OS( GetKey() );
+	
+	waitKey();
 	cleanUp();
-#else
+	
+#ifndef _EZ80
 	{
 		pixel **const ppm_raster = ppm_allocarray(lineWidth, numLines);
 		size_t x,y;
