@@ -7,6 +7,7 @@
  */
 
 #include "Transformation.h"
+#include <math.h>
 
 void identProj(const Point *p, Point *o, const void * discard){
 	*o = *p;
@@ -56,8 +57,35 @@ void scaleProj(const Point *p, Point *o, const float * scale){
 	*o = tmp;
 }
 
+void yprToTrans(const YPRTrans* ypr, RotMat o){
+	/*
+	 * In our coordinates, yaw = y, pitch = x, roll = z
+	 * We will compose our rotations as Y_1 X_2 Z_3
+	 */
+	const float yaw = ypr->yaw,
+	pitch = ypr->pitch,
+	roll = ypr->roll,
+	c1 = cos(yaw), s1 = sin(yaw),
+	c2 = cos(pitch), s2 = sin(pitch),
+	c3 = cos(roll), s3 = sin(roll);
+	
+	INIT_POINT(o[0], c1*c3 + s1*s2*s3, c3*s1*s2 - c1*s3, c2*s1);
+	INIT_POINT(o[1], c2*s3, c2*c3, -s2);
+	INIT_POINT(o[2], c1*s2*s3 - c3 * s1, c1*c3*s2 + s1*s3, c1*c2);
+}
+
+void rotateTrans(const Point *p, Point *o, const RotMat rot) {
+	Point tmp;
+	INIT_POINT(tmp,
+			   dot(p,rot + 0),
+			   dot(p,rot + 1),
+			   dot(p,rot + 2));
+	*o = tmp;
+}
+
 const TransformationF identity = &identProj;
 const TransformationF orthographic = (TransformationF)(&orthoProj);
 const TransformationF compose = (TransformationF)(&composeProj);
 const TransformationF onto = (TransformationF)(&ontoProj);
 const TransformationF scale = (TransformationF)(&scaleProj);
+const TransformationF rotate = (TransformationF)(&rotateTrans);

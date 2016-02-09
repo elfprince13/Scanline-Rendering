@@ -35,19 +35,26 @@ typedef struct {
 	float scale;
 } DrawCoords;
 
+
+static YPRTrans ypr = {-30 * 6.283185307179586 / 360, -30 * 6.283185307179586 / 360, 0};
+static RotMat rotation;
 static DrawCoords drawCoords = {170, 40, 0.7, 100};
 
 void viewF(const Point *p, Point *o, const DrawCoords *offset);
 void viewF(const Point *p, Point *o, const DrawCoords *offset){
 	const float x = offset->scale * p->x,
 	 y = offset->scale * p->y,
-	z = offset->scale * p->z,
-	zOff = z * offset->zFrac;
-	INIT_POINT(*o, offset->x + x + zOff, offset->y + y + zOff, z);
+	z = offset->scale * p->z/*,
+	zOff = z * offset->zFrac*/;
+	INIT_POINT(*o, offset->x + x/* + zOff*/, offset->y + y/* + zOff*/, z);
 }
-
-const Transformation viewProj = {(TransformationF)(&viewF),&drawCoords};
-
+/*
+static const Transformation viewProj = {(TransformationF)(&viewF),&drawCoords};
+static const Transformation rotF = {(TransformationF)(&rotateTrans),rotation};
+*/
+static ComposeProj rotAndView = {{(TransformationF)(&viewF),&drawCoords},
+	{(TransformationF)(&rotateTrans),rotation}};
+static const Transformation rotAndViewProj = {(TransformationF)&composeProj,&rotAndView};
 
 
 int main(int argc, const char * argv[]) {
@@ -123,14 +130,59 @@ int main(int argc, const char * argv[]) {
 	setPaletteConfig(ldConfig);
 	setPalette(palette, sizeof(palette) / sizeof(HardwareColor));
 	
-	transformData(&viewProj, cubePointsSrc, cubePoints, 8);
-	buckets = bucketPrims(buckets, numLines, cube, sizeof(cube) / sizeof(Primitive));
+	{
+		bool update = true;
+#ifdef _EZ80
+#define skLeft 2
+#define skRight 3
+#define skUp 4
+#define skDown 1
+#define sk2nd 36
+#define skAlpha 30
+#define skEnter 9
+		int keypress;
+		const float RAD_P_DEG = 6.283185307179586 / 360,
+		ROT_STEP = 30 * RAD_P_DEG;
+		do {
+#endif
+			if(update){
+				yprToTrans(&ypr, rotation);
+				transformData(&rotAndViewProj, cubePointsSrc, cubePoints, 8);
+				buckets = bucketPrims(buckets, numLines, cube, sizeof(cube) / sizeof(Primitive));
+				memset(raster, decodeColor(WHITE), rasterByteCount);
+				render(raster, lineWidth, numLines, buckets);
+			}
+#ifdef _EZ80
+			keypress = waitKey();
+			switch (keypress) {
+				case skLeft:
+					ypr.yaw -= ROT_STEP;
+					break;
+				case skRight:
+					ypr.yaw += ROT_STEP;
+					break;
+				case skUp:
+					ypr.pitch -= ROT_STEP;
+					break;
+				case skDown:
+					ypr.pitch += ROT_STEP;
+					break;
+				case sk2nd:
+					ypr.roll -= ROT_STEP;
+					break;
+				case skAlpha:
+					ypr.pitch += ROT_STEP;
+					break;
+					
+				default:
+					update = false;
+					break;
+			}
+		} while (keypress != skEnter);
+#endif
+	}
 	
-	memset(raster, decodeColor(WHITE), rasterByteCount);
-	render(raster, lineWidth, numLines, buckets);
 	buckets = teardownBuckets(buckets, numLines);
-	
-	waitKey();
 	cleanUp();
 	
 #ifndef _EZ80

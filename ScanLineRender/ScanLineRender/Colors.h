@@ -30,8 +30,11 @@ typedef HardwareColor* Palette;
 extern PaletteConfig activeConfig;
 void setPaletteConfig(const PaletteConfig);
 PaletteConfig getPaletteConfig(void);
-/*PaletteRef decodeColor(Color);*/
 #define decodeColor(c) activeConfig[((c) & 0x1ff)][0]
+
+#define HIDE_FLAG (1 << 9)
+#define UNHIDE_MASK (~(1 << 9))
+#define INVISIBLE(p) ((p)->color & HIDE_FLAG)
 
 void setActiveColor(Color);
 Color getActiveColor(void);
