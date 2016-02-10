@@ -171,7 +171,7 @@ int main(int argc, const char * argv[]) {
 					ypr.roll -= ROT_STEP;
 					break;
 				case skAlpha:
-					ypr.pitch += ROT_STEP;
+					ypr.roll += ROT_STEP;
 					break;
 					
 				default:
