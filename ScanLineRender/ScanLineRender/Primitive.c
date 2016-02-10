@@ -50,6 +50,23 @@ void makeQuad(Primitive *o, Color c, const Edge e1, const Edge e2, const Edge e3
 	*o = tmp;
 }
 
+static float fastinvsqrt( float number );
+float fastinvsqrt( float number )
+{
+	int32_t i;
+	float x2, y;
+	const float threehalfs = 1.5F;
+	
+	x2 = number * 0.5F;
+	y  = number;
+	i  = * ( int32_t * ) &y;
+	i  = 0x5f3759df - ( i >> 1 );
+	y  = * ( float * ) &i;
+	y  = y * ( threehalfs - ( x2 * y * y ) );
+	
+	return y;
+}
+
 float getZForXY(const Primitive *p, float x, float y){
 	Point **const boundary = p->boundary;
 	float ret;
@@ -85,16 +102,22 @@ float getZForXY(const Primitive *p, float x, float y){
 		vy = c->y - b->y,
 		vz = c->z - b->z;
 		
-		const float nx = uy * vz - uz * vy,
+		/* the normal */
+		float nx = uy * vz - uz * vy,
 		ny = uz * vx - ux * vz,
-		nz = ux * vy - uy * vx;
+		nz = ux * vy - uy * vx,
+		ninvm = fastinvsqrt(nx*nx + ny*ny + nz*nz);
+		nx /= ninvm;
+		ny /= ninvm;
+		nz /= ninvm;
 		
-		const float d = -nx * us->x
-		-ny * us->y
-		-nz * us->z,
-		numer = (-d - nx * x - ny * y);
-		
-		ret = CLOSE_ENOUGH(nz, 0) ? ((numer > 0) ? HUGE_VAL : -HUGE_VAL) : (numer / nz) ;
+		{
+			/* d coefficient: nx * x + ny * y + nz * z + d = 0 */
+			const float minusD = nx * a->x + ny * a->y + nz * a->z,
+			numer = (minusD - nx * x - ny * y);
+			ret = CLOSE_ENOUGH(nz, 0) ? ((numer > 0) ? HUGE_VAL : -HUGE_VAL) : (numer / nz) ;
+		}
+
 	}
 	return ret;
 }
