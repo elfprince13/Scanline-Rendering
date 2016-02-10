@@ -170,7 +170,7 @@ void render(PaletteRef *raster, int lineWidth, int numLines, const rb_red_blk_tr
 						i = i->tail;
 						if(i){
 							nextEdge = i->data;
-							nextX = getSmartXForLine(nextEdge, line);
+							nextX = roundOwn(getSmartXForLine(nextEdge, line));
 							dPrintf(("\tNext edges @ x = %d from %s\n",nextX, fmtColor(nextEdge->owner->color)));
 						} else {
 							dPrintf(("\tNo more edges\n"));
