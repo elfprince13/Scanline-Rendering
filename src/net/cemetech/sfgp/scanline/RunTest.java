@@ -103,9 +103,9 @@ public class RunTest {
 
 			@Override
 			public Point projectPoint(Point p) {
-				int x = p.getComponent(Point.CoordName.X);
-				int y = p.getComponent(Point.CoordName.Y);
-				int z = p.getComponent(Point.CoordName.Z);
+				final float x = p.getComponent(Point.CoordName.X),
+						y = p.getComponent(Point.CoordName.Y),
+						z = p.getComponent(Point.CoordName.Z);
 				return new Point((int)(170 + x + 0.7*z), (int)(40 + y + 0.7*z), z);
 			}
 		

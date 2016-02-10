@@ -5,10 +5,10 @@ import net.cemetech.sfgp.scanline.geom.Point.CoordName;
 
 public class CoordinatePlane{
 
-	public static Projection onto(CoordName cP, int vP)
+	public static Projection onto(CoordName cP, float vP)
 	{
 		final CoordName c = cP;
-		final int v = vP;
+		final float v = vP;
 		return new Projection(){
 			@Override
 			public Point projectPoint(Point p) {

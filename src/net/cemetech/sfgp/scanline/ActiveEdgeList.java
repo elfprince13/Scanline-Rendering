@@ -21,10 +21,10 @@ public class ActiveEdgeList {
 		scanLine++;
 		for(Iterator<EdgeListDatum> i = activeEdges.iterator(); i.hasNext();){
 			EdgeListDatum edge = i.next();
-			int edgeEnd = Math.max( 
+			final float edgeEnd = Math.max( 
 					edge.edge.getEndPoint(Edge.EndPoint.START).getComponent(Point.CoordName.Y),
-					edge.edge.getEndPoint(Edge.EndPoint.END).getComponent(Point.CoordName.Y));
-			int lowEnd = Math.min( 
+					edge.edge.getEndPoint(Edge.EndPoint.END).getComponent(Point.CoordName.Y)),
+					lowEnd = Math.min( 
 					edge.edge.getEndPoint(Edge.EndPoint.START).getComponent(Point.CoordName.Y),
 					edge.edge.getEndPoint(Edge.EndPoint.END).getComponent(Point.CoordName.Y));
 			if(edgeEnd < scanLine){
@@ -39,10 +39,10 @@ public class ActiveEdgeList {
 		}
 		for(Primitive prim : activePrims){
 			for(Edge e : prim.boundary){
-				int sy = e.getEndPoint(Edge.EndPoint.START).getComponent(Point.CoordName.Y);
-				int ey = e.getEndPoint(Edge.EndPoint.END).getComponent(Point.CoordName.Y);
-				int mnY = Math.min(sy, ey);
-				int mxY = Math.max(sy, ey);
+				final float sy = e.getEndPoint(Edge.EndPoint.START).getComponent(Point.CoordName.Y),
+						ey = e.getEndPoint(Edge.EndPoint.END).getComponent(Point.CoordName.Y),
+						mnY = Math.min(sy, ey),
+						mxY = Math.max(sy, ey);
 				EdgeListDatum newEdge = new EdgeListDatum(e, prim);
 				if ((mnY == scanLine && (sy != ey || newEdge.isSingleton())) || (scanLine == 0 && mnY < 0 && mxY > 0)){
 					System.out.println("Activating " + prim.color.toString() + 
@@ -74,37 +74,37 @@ public class ActiveEdgeList {
 			edge = e; owner = p; placeHolder = pH;
 		}
 		
-		public int getMinXForLine(Projection p, int scanLine){
-			Edge projEdge = p.projectEdge(edge);
-			Point start = projEdge.getEndPoint(Edge.EndPoint.START);
-			Point end = projEdge.getEndPoint(Edge.EndPoint.END);
-			int sx = start.getComponent(Point.CoordName.X);
-			int ex = end.getComponent(Point.CoordName.X);
-			int sy = start.getComponent(Point.CoordName.Y);
-			int ey = end.getComponent(Point.CoordName.Y);
-			int run = ex - sx;
-			int rise = ey - sy;
-			int ret = ((rise == 0) ? Math.min(ex, sx) : (((scanLine - sy) * run) / rise) + sx);
+		public float getMinXForLine(Projection p, int scanLine){
+			final Edge projEdge = p.projectEdge(edge);
+			final Point start = projEdge.getEndPoint(Edge.EndPoint.START),
+					end = projEdge.getEndPoint(Edge.EndPoint.END);
+			final float sx = start.getComponent(Point.CoordName.X),
+					ex = end.getComponent(Point.CoordName.X),
+					sy = start.getComponent(Point.CoordName.Y),
+					ey = end.getComponent(Point.CoordName.Y),
+					run = ex - sx,
+					rise = ey - sy,
+					ret = ((rise == 0) ? Math.min(ex, sx) : (((scanLine - sy) * run) / rise) + sx);
 			return  ret;
 		}
 		
-		public int getMaxXForLine(Projection p, int scanLine){
-			Edge projEdge = p.projectEdge(edge);
-			Point start = projEdge.getEndPoint(Edge.EndPoint.START);
-			Point end = projEdge.getEndPoint(Edge.EndPoint.END);
-			int sx = start.getComponent(Point.CoordName.X);
-			int ex = end.getComponent(Point.CoordName.X);
-			int sy = start.getComponent(Point.CoordName.Y);
-			int ey = end.getComponent(Point.CoordName.Y);
-			int rise = sy - ey;
-			int run = sx - ex;
-			int minBelow = getMinXForLine(p, scanLine - 1);
-			int minAbove = getMinXForLine(p, scanLine + 1);
+		public float getMaxXForLine(Projection p, int scanLine){
+			final Edge projEdge = p.projectEdge(edge);
+			final Point start = projEdge.getEndPoint(Edge.EndPoint.START),
+					end = projEdge.getEndPoint(Edge.EndPoint.END);
+			final float sx = start.getComponent(Point.CoordName.X),
+					ex = end.getComponent(Point.CoordName.X),
+					sy = start.getComponent(Point.CoordName.Y),
+					ey = end.getComponent(Point.CoordName.Y),
+					rise = sy - ey,
+					run = sx - ex,
+					minBelow = getMinXForLine(p, scanLine - 1),
+					minAbove = getMinXForLine(p, scanLine + 1);
 			return ((rise == 0) ? Math.max(sx, ex)
 					: ((run == 0) ? sx : (Math.max(minBelow,minAbove) - 1)));
 		}
 		
-		public int smartXForLine(Projection p, int scanLine){
+		public float smartXForLine(Projection p, int scanLine){
 			return placeHolder ? getMaxXForLine(p, scanLine) : getMinXForLine(p, scanLine);
 		}
 		
@@ -119,7 +119,7 @@ public class ActiveEdgeList {
 
 		@Override
 		public int compare(EdgeListDatum o1, EdgeListDatum o2) {
-			int delta = o1.smartXForLine(id, scanLine) - o2.smartXForLine(id, scanLine);
+			float delta = o1.smartXForLine(id, scanLine) - o2.smartXForLine(id, scanLine);
 			if(delta == 0){
 				delta = o1.edge.getEndPoint(Edge.EndPoint.START).getComponent(Point.CoordName.X) - o2.edge.getEndPoint(Edge.EndPoint.START).getComponent(Point.CoordName.X);
 			}
@@ -141,7 +141,7 @@ public class ActiveEdgeList {
 			if(delta == 0){
 				delta = (o1.placeHolder ? 1 : 0) - (o2.placeHolder ? 1 : 0);
 			}
-			return delta;
+			return (delta == 0) ? 0 : ((delta < 0) ? -1 : 1);
 		}
 		
 	}

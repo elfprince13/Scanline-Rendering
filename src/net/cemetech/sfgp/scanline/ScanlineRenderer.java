@@ -36,7 +36,7 @@ public class ScanlineRenderer<T extends Projection> {
 		Arrays.sort(projectedGeometry,new TopToBottom());
 		for(Primitive prim : projectedGeometry){
 			prim.unique = prim.uniqueV++;
-			int pScanline = bottomMostPoint(prim);
+			int pScanline = Math.round(bottomMostPoint(prim));
 			if(pScanline < numLines && (pScanline >= 0 || topMostPoint(prim) >= 0)){
 				int dstBucket = Math.max(0,pScanline);
 				scanLinePrimBuckets.get(dstBucket).add(prim);
@@ -61,16 +61,16 @@ public class ScanlineRenderer<T extends Projection> {
 			System.out.println("\tUpdating activePrimSet");
 			for(Iterator<Primitive> i = activePrimSet.iterator(); i.hasNext();){
 				Primitive prim = i.next();
-				int top = topMostPoint(prim);
-				int bottom = bottomMostPoint(prim);
+				int top = Math.round(topMostPoint(prim));
+				int bottom = Math.round(bottomMostPoint(prim));
 				if(top < line){
 					System.out.println("\t\t" + top + " -> " + bottom + " ( " + prim.color + " ) is not valid here: " + line);
 					i.remove();	
 				}
 			}
 			for(Primitive prim : scanLinePrimBuckets.get(line)){
-				int top = topMostPoint(prim);
-				int bottom = bottomMostPoint(prim);
+				int top = Math.round(topMostPoint(prim));
+				int bottom = Math.round(bottomMostPoint(prim));
 				System.out.println("\t\t" + top + " -> " + bottom + " ( " + prim.color + " ) is added here: " + line);
 				
 				activePrimSet.add(prim);
@@ -85,7 +85,7 @@ public class ScanlineRenderer<T extends Projection> {
 				nextEdge = i.next();
 				while((nextEdge != null) && curPixel < lineWidth){
 					startEdge = nextEdge;
-					int startX = startEdge.smartXForLine(id, line);
+					int startX = Math.round(startEdge.smartXForLine(id, line));
 					int nextX;
 					nextEdge = null; // Safety valve. We want a NullPointerException if we use it before the update.
 										
@@ -101,8 +101,8 @@ public class ScanlineRenderer<T extends Projection> {
 						boolean eV = edgeIn.contains(e);
 						boolean v = (sV || eV) && flatIn.contains(here) && flatHere.contains(here) && !(startEdge.owner.getArity() == 1);
 						Edge vert = new Edge(here, new Point(startX,line+1,0));
-						int dotH = v ? vert.dot(flatHere) : 0;
-						int dotIn = v ? vert.dot(flatIn) : 0;
+						float dotH = v ? vert.dot(flatHere) : 0;
+						float dotIn = v ? vert.dot(flatIn) : 0;
 						if(v && (dotH * dotIn <= 0)){
 							System.out.println("\tFound horizontal vertex " + startEdge.owner.color.toString() + " at " + startEdge.smartXForLine(id, line) + ". Don't delete it yet");
 						} else {
@@ -122,7 +122,7 @@ public class ScanlineRenderer<T extends Projection> {
 					
 					if(i.hasNext()){
 						nextEdge = i.next();
-						nextX = nextEdge.smartXForLine(id, line);
+						nextX = Math.round(nextEdge.smartXForLine(id, line));
 						System.out.println("\tNext edges @ x = " + nextX + " from " + nextEdge.owner.color.toString());
 					} else {
 						System.out.println("\tNo more edges");
@@ -135,9 +135,9 @@ public class ScanlineRenderer<T extends Projection> {
 						boolean zFight = false;
 						boolean solitary = false;
 						System.out.println("\tTesting depth:");
-						curDraw = null; int bestZ = 0, j = 0;
+						curDraw = null; float bestZ = 0; int j = 0;
 						for(Primitive prim : inFlags.keySet()){
-							int testZ = prim.getZForXY(curPixel, line);
+							float testZ = prim.getZForXY(curPixel, line);
 							// -Z is out of the screen, so ... 
 							if(++j == 1 || testZ <= bestZ){
 								System.out.println("\t\tHit: " + testZ + " <= " + bestZ + " || " + j + " == " + 1 + " for " + prim.color);
@@ -200,7 +200,7 @@ public class ScanlineRenderer<T extends Projection> {
 	private class TopToBottom implements Comparator<Primitive> {	
 		@Override
 		public int compare(Primitive o1, Primitive o2) {
-			int delta = topMostPoint(o1) - topMostPoint(o2);
+			float delta = topMostPoint(o1) - topMostPoint(o2);
 			if(delta == 0){
 				delta = bottomMostPoint(o1) - bottomMostPoint(o2);
 			}
@@ -216,65 +216,65 @@ public class ScanlineRenderer<T extends Projection> {
 			if(delta == 0){
 				delta = o1.color.hashCode() - o2.color.hashCode();
 			}
-			return delta;
+			return delta == 0 ? 0 : (delta < 0 ? -1 : 1);
 		}
 	}
 	
-	private int topMostPoint(Primitive prim){
-		int top = 0, i = 0;
+	private float topMostPoint(Primitive prim){
+		float top = 0; int i = 0;
 		for(Edge e : prim.boundary) {
-			int candidate = topMostPoint(e);
+			float candidate = topMostPoint(e);
 			if(i++ == 0 || candidate > top) top = candidate;
 		}
 		return top;
 	}
 	
-	private int bottomMostPoint(Primitive prim){
-		int bottom = 0, i = 0;
+	private float bottomMostPoint(Primitive prim){
+		float bottom = 0; int i = 0;
 		for(Edge e : prim.boundary) {
-			int candidate = bottomMostPoint(e);
+			float candidate = bottomMostPoint(e);
 			if(i++ == 0 || candidate < bottom) bottom = candidate;
 		}
 		return bottom;
 	}
 	
-	private int topMostPoint(Edge e){
+	private float topMostPoint(Edge e){
 		return Math.max(
 				e.getEndPoint(EndPoint.START).getComponent(CoordName.Y),
 				e.getEndPoint(EndPoint.END).getComponent(CoordName.Y));
 	}
 	
-	private int bottomMostPoint(Edge e){
+	private float bottomMostPoint(Edge e){
 		return Math.min(
 				e.getEndPoint(EndPoint.START).getComponent(CoordName.Y),
 				e.getEndPoint(EndPoint.END).getComponent(CoordName.Y));
 	}
 	
-	private int rightMostPoint(Primitive prim){
-		int top = 0, i = 0;
+	private float rightMostPoint(Primitive prim){
+		float top = 0; int i = 0;
 		for(Edge e : prim.boundary) {
-			int candidate = rightMostPoint(e);
+			float candidate = rightMostPoint(e);
 			if(i++ == 0 || candidate > top) top = candidate;
 		}
 		return top;
 	}
 	
-	private int leftMostPoint(Primitive prim){
-		int bottom = 0, i = 0;
+	private float leftMostPoint(Primitive prim){
+		float bottom = 0; int i = 0;
 		for(Edge e : prim.boundary) {
-			int candidate = leftMostPoint(e);
+			float candidate = leftMostPoint(e);
 			if(i++ == 0 || candidate < bottom) bottom = candidate;
 		}
 		return bottom;
 	}
 	
-	private int rightMostPoint(Edge e){
+	private float rightMostPoint(Edge e){
 		return Math.max(
 				e.getEndPoint(EndPoint.START).getComponent(CoordName.X),
 				e.getEndPoint(EndPoint.END).getComponent(CoordName.X));
 	}
 	
-	private int leftMostPoint(Edge e){
+	private float leftMostPoint(Edge e){
 		return Math.min(
 				e.getEndPoint(EndPoint.START).getComponent(CoordName.X),
 				e.getEndPoint(EndPoint.END).getComponent(CoordName.X));

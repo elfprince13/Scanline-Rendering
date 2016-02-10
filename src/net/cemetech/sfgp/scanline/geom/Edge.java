@@ -52,7 +52,7 @@ public class Edge implements Collection<Point>{
 	// Same as the non-static version
 	// However, here we require that the
 	// starts already be aligned.
-	public static int dot(Edge u, Edge v){
+	public static float dot(Edge u, Edge v){
 		Point us = u.getEndPoint(EndPoint.START);
 		Point ue = u.getEndPoint(EndPoint.END);
 		Point vs = v.getEndPoint(EndPoint.START);
@@ -76,7 +76,7 @@ public class Edge implements Collection<Point>{
 	
 	// Dot product of the vectors found by translating two edges 
 	// with a shared vertex to the origin.
-	public int dot(Edge e2){
+	public float dot(Edge e2){
 		Edge d1 = null, d2 = null;
 		for(Point p1 : this){
 			for(Point p2 : e2){

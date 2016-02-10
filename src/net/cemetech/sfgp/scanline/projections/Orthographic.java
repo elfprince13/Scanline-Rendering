@@ -18,16 +18,16 @@ public class Orthographic extends Projection {
 
 	@Override
 	public Point projectPoint(Point p) {
-		int x = p.getComponent(Point.CoordName.X);
-		int y = p.getComponent(Point.CoordName.Y);
-		int z = p.getComponent(Point.CoordName.Z);
-		
-		int l = min.getComponent(Point.CoordName.X);
-		int r = max.getComponent(Point.CoordName.X);
-		int b = min.getComponent(Point.CoordName.Y);
-		int t = max.getComponent(Point.CoordName.Y);
-		int n = min.getComponent(Point.CoordName.Z);
-		int f = max.getComponent(Point.CoordName.Z);
+		final float x = p.getComponent(Point.CoordName.X),
+				y = p.getComponent(Point.CoordName.Y),
+				z = p.getComponent(Point.CoordName.Z),
+				
+				l = min.getComponent(Point.CoordName.X),
+				r = max.getComponent(Point.CoordName.X),
+				b = min.getComponent(Point.CoordName.Y),
+				t = max.getComponent(Point.CoordName.Y),
+				n = min.getComponent(Point.CoordName.Z),
+				f = max.getComponent(Point.CoordName.Z);
 		
 		return new Point((2*x - (l + r))/(r-l),(2*y - (t + b))/(t-b),(-2*z + (f + n))/(f-n));
 	}

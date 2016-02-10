@@ -4,8 +4,8 @@ import net.cemetech.sfgp.scanline.geom.Point;
 import net.cemetech.sfgp.scanline.geom.Point.CoordName;
 
 public class Scale extends Projection {
-	int scale;
-	public Scale(int s){scale = s;}
+	float scale;
+	public Scale(float s){scale = s;}
 
 	@Override
 	public Point projectPoint(Point p) {

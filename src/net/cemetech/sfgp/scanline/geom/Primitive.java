@@ -44,69 +44,67 @@ public class Primitive implements Comparable<Primitive> {
 	
 	public int getArity(){ return boundary.size(); }
 	
-	public int getZForXY(int x, int y){
+	public float getZForXY(int x, int y){
 		assert(getArity() > 0);
+		float ret;
 		if(getArity() == 1){
 			// Alpha blend! wut wut.
-			Edge v = boundary.getFirst();
-			Point vs = v.getEndPoint(EndPoint.START);
-			Point ve = v.getEndPoint(EndPoint.END);
+			final Edge v = boundary.getFirst();
+			final Point vs = v.getEndPoint(EndPoint.START),
+					ve = v.getEndPoint(EndPoint.END);
 			
-			int sx = vs.getComponent(CoordName.X);
-			int sy = vs.getComponent(CoordName.Y);
-			int sz = vs.getComponent(CoordName.Z);
+			final float sx = vs.getComponent(CoordName.X),
+					sy = vs.getComponent(CoordName.Y),
+					sz = vs.getComponent(CoordName.Z);
 			
-			int dx = ve.getComponent(CoordName.X) - sx;
-			int dy = ve.getComponent(CoordName.Y) - sy;
-			int dz = ve.getComponent(CoordName.Z) - sz;
+			final float dx = ve.getComponent(CoordName.X) - sx,
+					dy = ve.getComponent(CoordName.Y) - sy,
+					dz = ve.getComponent(CoordName.Z) - sz;
 			
 			assert((dx == 0 && dy == 0) || (dx != 0 && dy != 0));
 			
 			// Theoretically these should be the same, but
 			// we'll average for robustness
-			int xNumer = dz * (x - sx);
-			int yNumer = dz * (y - sy);
-			int xEst = (dx == 0) ? Math.min(0,  dz) : (xNumer / dx);
-			int yEst = (dy == 0) ? Math.min(0,  dz) : (yNumer / dy);
+			final float xNumer = dz * (x - sx),
+					yNumer = dz * (y - sy),
+					xEst = (dx == 0) ? Math.min(0,  dz) : (xNumer / dx),
+					yEst = (dy == 0) ? Math.min(0,  dz) : (yNumer / dy);
 			
-			return sz + (xEst + yEst) / 2; 
+			ret = sz + (xEst + yEst) / 2; 
 		} else {
-			Edge e1 = boundary.getFirst();
-			Edge e2 = boundary.get(1);
+			final Edge e1 = boundary.getFirst(),
+					e2 = boundary.get(1);
 			
-			Point us = e1.getEndPoint(EndPoint.START);
-			Point ue = e1.getEndPoint(EndPoint.END);
-			Point u = new Point(
+			final Point us = e1.getEndPoint(EndPoint.START),
+					ue = e1.getEndPoint(EndPoint.END),
+					u = new Point(
 					us.getComponent(CoordName.X) - ue.getComponent(CoordName.X),
 					us.getComponent(CoordName.Y) - ue.getComponent(CoordName.Y),
 					us.getComponent(CoordName.Z) - ue.getComponent(CoordName.Z));
-			int ux = u.getComponent(CoordName.X);
-			int uy = u.getComponent(CoordName.Y);
-			int uz = u.getComponent(CoordName.Z);
+			final float ux = u.getComponent(CoordName.X),
+					uy = u.getComponent(CoordName.Y),
+					uz = u.getComponent(CoordName.Z);
 			
-			Point vs = e2.getEndPoint(EndPoint.START);
-			Point ve = e2.getEndPoint(EndPoint.END);
-			Point v = new Point(
+			final Point vs = e2.getEndPoint(EndPoint.START),
+					ve = e2.getEndPoint(EndPoint.END),
+					v = new Point(
 					vs.getComponent(CoordName.X) - ve.getComponent(CoordName.X),
 					vs.getComponent(CoordName.Y) - ve.getComponent(CoordName.Y),
 					vs.getComponent(CoordName.Z) - ve.getComponent(CoordName.Z));
-			int vx = v.getComponent(CoordName.X);
-			int vy = v.getComponent(CoordName.Y);
-			int vz = v.getComponent(CoordName.Z);
-			
-			int nx = uy * vz - uz * vy;
-			int ny = uz * vx - ux * vz;
-			int nz = ux * vy - uy * vx;
-			
-			int d = -nx * us.getComponent(CoordName.X)
+			final float vx = v.getComponent(CoordName.X),
+					vy = v.getComponent(CoordName.Y),
+					vz = v.getComponent(CoordName.Z),
+					nx = uy * vz - uz * vy,
+					ny = uz * vx - ux * vz,
+					nz = ux * vy - uy * vx,
+					d = -nx * us.getComponent(CoordName.X)
 					-ny * us.getComponent(CoordName.Y)
-					-nz * us.getComponent(CoordName.Z);
+					-nz * us.getComponent(CoordName.Z),
+					numer = (-d - nx * x - ny * y);
 			
-			int numer = (-d - nx * x - ny * y);
-			
-			return (nz == 0) ? ((numer > 0) ? Integer.MAX_VALUE : Integer.MIN_VALUE) : (numer / nz) ;
+			ret = (nz == 0) ? ((numer > 0) ? Integer.MAX_VALUE : Integer.MIN_VALUE) : (numer / nz) ;
 		}
-	
+		return ret;
 	}
 	//*
 	public int hashCode() {

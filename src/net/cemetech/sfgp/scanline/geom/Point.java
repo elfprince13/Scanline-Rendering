@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class Point implements Collection<Integer>{
+public class Point implements Collection<Float>{
 	public enum CoordName{
 		X, Y, Z;
 		public int toNum() {
@@ -17,26 +17,26 @@ public class Point implements Collection<Integer>{
 		}
 	}
 	
-	private int[] components;
-	public Point(int x, int y, int z){
-		components = new int[3];
+	private float[] components;
+	public Point(float x, float y, float z){
+		components = new float[3];
 		components[CoordName.X.toNum()] = x;
 		components[CoordName.Y.toNum()] = y;
 		components[CoordName.Z.toNum()] = z;
 	}
 	
-	public Point(int[] initComponents) {
+	public Point(float[] initComponents) {
 		if(initComponents.length != 3) throw new IllegalArgumentException("A point only has three components");
 		components = initComponents;
 	}
 	
 	public static Point origin(){ return new Point(0,0,0); }
 	
-	public int getComponent(CoordName e){ 
+	public float getComponent(CoordName e){ 
 		return components[e.toNum()];
 	}
 
-	public void setEndPoint(CoordName e, int newComponent){
+	public void setEndPoint(CoordName e, float newComponent){
 		components[e.toNum()] = newComponent;
 	}
 	
@@ -52,8 +52,8 @@ public class Point implements Collection<Integer>{
 	}
 
 	@Override
-	public Iterator<Integer> iterator() {
-		return new Iterator<Integer>(){
+	public Iterator<Float> iterator() {
+		return new Iterator<Float>(){
 			int i = 0;
 
 			@Override
@@ -62,7 +62,7 @@ public class Point implements Collection<Integer>{
 			}
 
 			@Override
-			public Integer next() {
+			public Float next() {
 				if(i == components.length){
 					throw new NoSuchElementException();
 				} else {
@@ -91,27 +91,27 @@ public class Point implements Collection<Integer>{
 	@Override
 	public boolean contains(Object o) {
 		boolean ret = false;
-		if(o instanceof Integer){
-			for(int i = 0; i < components.length; i++) ret |= ((Integer)o).intValue() == components[i];
+		if(o instanceof Float){
+			for(int i = 0; i < components.length; i++) ret |= ((Float)o).floatValue() == components[i];
 		}
 		return ret;
 	}
 
 	@Override
 	public Object[] toArray() {
-		return toArray(new Integer[components.length]);
+		return toArray(new Float[components.length]);
 	}
 
 	@Override
 	public <T> T[] toArray(T[] a) {
-		if(a.length < components.length) a = (T[])(new Integer[components.length]);
+		if(a.length < components.length) a = (T[])(new Float[components.length]);
 		if(a.length > components.length) a[components.length] = null;
-		for(int i = 0; i < components.length; i++) a[i] = (T)(new Integer(components[i]));
+		for(int i = 0; i < components.length; i++) a[i] = (T)(new Float(components[i]));
 		return a;
 	}
 
 	@Override
-	public boolean add(Integer e) {
+	public boolean add(Float e) {
 		throw new UnsupportedOperationException("can't modify points like this");
 	}
 
@@ -131,7 +131,7 @@ public class Point implements Collection<Integer>{
 	}
 
 	@Override
-	public boolean addAll(Collection<? extends Integer> c) {
+	public boolean addAll(Collection<? extends Float> c) {
 		throw new UnsupportedOperationException("can't modify points like this");
 	}
 
@@ -161,7 +161,7 @@ public class Point implements Collection<Integer>{
 	
 	public int hashCode(){
 		int a = 0;
-		for(int i : components) a ^= i;
+		for(float i : components) a ^= Float.floatToIntBits(i);
 		return a;
 	}
 
