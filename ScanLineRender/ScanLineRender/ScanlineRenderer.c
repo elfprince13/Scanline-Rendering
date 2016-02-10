@@ -141,7 +141,8 @@ void render(PaletteRef *raster, int lineWidth, int numLines, const rb_red_blk_tr
 							static Edge flatHere = {localPoints, localPoints + 1},
 							flatIn = {localPoints + 2, localPoints + 3},
 							vert = {localPoints + 4, localPoints + 5};
-							Point **const edgeHere = startEdge->edge, **edgeIn = inFlag->info;
+							const EdgeListEntry *const edgeInEntry = inFlag->info;
+							Point **const edgeHere = startEdge->edge, **edgeIn = edgeInEntry->edge;
 							const Point *const s = edgeHere[START],
 							*const e = edgeHere[END];
 							Point here;
@@ -166,7 +167,7 @@ void render(PaletteRef *raster, int lineWidth, int numLines, const rb_red_blk_tr
 						} else {
 							dPrintf(("\tNow *in* new %s at %f\n",fmtColor(startEdge->owner->color), getSmartXForLine(startEdge, line)));
 							/* This might happen if a polygon is parallel to the x-axis */
-							RBMapPut(&inFlags, startOwner, startEdge->edge);
+							RBMapPut(&inFlags, startOwner, startEdge);
 						}
 						
 						if(curPixel < startX){
@@ -194,7 +195,8 @@ void render(PaletteRef *raster, int lineWidth, int numLines, const rb_red_blk_tr
 							dPrintf(("\tTesting depth:\n"));
 							for(node = inFlags.tree.first; node != inFlags.tree.sentinel; node = TreeSuccessor((rb_red_blk_tree*)(&inFlags), node)) {
 								const Primitive *prim = node->key;
-								const float testZ = getZForXY(prim, curPixel, line);
+								/* We need sub-pixel accuracy */
+								const float testZ = getZForXY(prim, max(curPixel, getMinXForLine(((rb_red_blk_map_node*)node)->info,line)), line);
 								if(testZ <= bestZ + PT_EPS){
 									dPrintf(("\t\tHit: %f <= %f for %s\n",testZ, bestZ, fmtColor(prim->color)));
 									if (CLOSE_ENOUGH(testZ, bestZ)) {
@@ -211,6 +213,8 @@ void render(PaletteRef *raster, int lineWidth, int numLines, const rb_red_blk_tr
 										curDraw = prim;
 										solitary = RBSetContains(&deFlags, prim);
 									}
+								} else {
+									dPrintf(("\t\tMiss: %f > %f for %s\n",testZ, bestZ, fmtColor(prim->color)));
 								}
 							}
 							
