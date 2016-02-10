@@ -9,6 +9,8 @@
 #include "Transformation.h"
 #include <math.h>
 
+int roundOwn(double);
+
 void identProj(const Point *p, Point *o, const void * discard){
 	*o = *p;
 }
@@ -44,6 +46,16 @@ void ontoProj(const Point *p, Point *o, const OntoProj * state){
 	y = state->zeroCoord == offsetof(Point, y) ? state->planeValue : p->y,
 	z = state->zeroCoord == offsetof(Point, z) ? state->planeValue : p->z;
 	INIT_POINT(tmp,x,y,z);
+	*o = tmp;
+}
+
+
+void snapOntoProj(const Point *p, Point *o, const OntoProj * state){
+	Point tmp;
+	const float x = state->zeroCoord == offsetof(Point, x) ? state->planeValue : p->x,
+	y = state->zeroCoord == offsetof(Point, y) ? state->planeValue : p->y,
+	z = state->zeroCoord == offsetof(Point, z) ? state->planeValue : p->z;
+	INIT_POINT(tmp,roundOwn(x),roundOwn(y),roundOwn(z));
 	*o = tmp;
 }
 

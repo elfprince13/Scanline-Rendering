@@ -77,7 +77,7 @@ rb_red_blk_tree* teardownBuckets(rb_red_blk_tree* buckets, int numLines){
 
 void render(PaletteRef *raster, int lineWidth, int numLines, const rb_red_blk_tree *scanLinePrimBuckets){
 	static OntoProj screenPlaneData = {offsetof(Point, z), 0};
-	static const Transformation screenPlane = {(TransformationF)(&ontoProj), &screenPlaneData};
+	static const Transformation screenPlane = {(TransformationF)(&snapOntoProj), &screenPlaneData};
 	{
 		int line;
 		rb_red_blk_tree activePrimSet;
