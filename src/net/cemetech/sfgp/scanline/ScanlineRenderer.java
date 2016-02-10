@@ -135,18 +135,19 @@ public class ScanlineRenderer<T extends Projection> {
 						boolean zFight = false;
 						boolean solitary = false;
 						System.out.println("\tTesting depth:");
-						curDraw = null; float bestZ = 0; int j = 0;
+						curDraw = null; float bestZ = Float.POSITIVE_INFINITY;
 						for(Primitive prim : inFlags.keySet()){
 							float testZ = prim.getZForXY(curPixel, line);
 							// -Z is out of the screen, so ... 
-							if(++j == 1 || testZ <= bestZ){
-								System.out.println("\t\tHit: " + testZ + " <= " + bestZ + " || " + j + " == " + 1 + " for " + prim.color);
-								if(testZ == bestZ && j != 1){
-									zFight = true;
-									// Lines at the depth should out-fight faces
+							if(testZ <= bestZ){
+								System.out.println("\t\tHit: " + testZ + " <= " + bestZ + " for " + prim.color);
+								if(testZ == bestZ){
 									if(prim.getArity() == 1){
+										zFight = curDraw != null && curDraw.getArity() == 1;
 										curDraw = prim;
 										solitary = deFlags.contains(prim);
+									} else {
+										zFight = curDraw != null && curDraw.getArity() != 1;
 									}
 								} else {
 									zFight = false;

@@ -106,7 +106,7 @@ public class RunTest {
 				final float x = p.getComponent(Point.CoordName.X),
 						y = p.getComponent(Point.CoordName.Y),
 						z = p.getComponent(Point.CoordName.Z);
-				return new Point((int)(170 + x + 0.7*z), (int)(40 + y + 0.7*z), z);
+				return new Point((int)(170 + x + 0.7*z), (int)(40 + y + 0.7*z - 0.3 * x), z);
 			}
 		
 		},new Scale(100));
