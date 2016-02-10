@@ -12,7 +12,7 @@
 #include "debugConfig.h"
 #include <math.h>
 
-static double roundOwn(double x);
+int roundOwn(double x);
 
 typedef int(*StatelessCompF)(const void*,const void*) ;
 
@@ -35,6 +35,13 @@ void transformData(const Transformation *txForm, const Point *srcGeometry, Point
 	
 	for(i = 0; i < pointCount; ++i){
 		f(srcGeometry + i, dstGeometry + i, state);
+		dPrintf(("(%f, %f, %f) -> (%f, %f, %f))\n",
+				 srcGeometry[i].x,
+				 srcGeometry[i].y,
+				 srcGeometry[i].z,
+				 dstGeometry[i].x,
+				 dstGeometry[i].y,
+				 dstGeometry[i].z));
 	}
 }
 
@@ -181,22 +188,22 @@ void render(PaletteRef *raster, int lineWidth, int numLines, const rb_red_blk_tr
 						nextX = min(nextX, lineWidth);
 						while ((!nextEdge && curPixel < lineWidth) || (curPixel < nextX)) {
 							bool zFight = false, solitary = false;
-							float bestZ = 0; size_t j = 0;
+							float bestZ = HUGE_VAL;
 							const rb_red_blk_node *node;
 							curDraw = NULL;
 							dPrintf(("\tTesting depth:\n"));
 							for(node = inFlags.tree.first; node != inFlags.tree.sentinel; node = TreeSuccessor((rb_red_blk_tree*)(&inFlags), node)) {
 								const Primitive *prim = node->key;
 								const float testZ = getZForXY(prim, curPixel, line);
-								if(++j == 1 || testZ <= bestZ){
-									dPrintf(("\t\tHit: %f <= %f || "SZF" == 1 for %s\n",testZ, bestZ, j,fmtColor(prim->color)));
-									if (testZ == bestZ && j != 1) {
+								if(testZ <= bestZ + PT_EPS){
+									dPrintf(("\t\tHit: %f <= %f for %s\n",testZ, bestZ, fmtColor(prim->color)));
+									if (CLOSE_ENOUGH(testZ, bestZ)) {
 										if (prim->arity == 1) {
-											zFight = curDraw->arity == 1;
+											zFight = curDraw && curDraw->arity == 1;
 											curDraw = prim;
 											solitary = RBSetContains(&deFlags, prim);
 										} else {
-											zFight = curDraw->arity != 1;
+											zFight = curDraw && curDraw->arity != 1;
 										}
 									} else {
 										zFight = false;
@@ -214,7 +221,7 @@ void render(PaletteRef *raster, int lineWidth, int numLines, const rb_red_blk_tr
 									const int drawWidth =  (zFight || solitary) ? 1 : ((nextEdge ? nextX : lineWidth) - curPixel),
 									stopPixel = curPixel + min(lineWidth - curPixel,
 															   max(0, drawWidth));
-									const Color drawColor = decodeColor(curDraw->color);
+									const Color drawColor = /*(uint16_t)roundOwn(63 * bestZ / 100) << 5;*/decodeColor(curDraw->color);
 									dPrintf(("Drawing %d @ (%d, %d)\n",drawWidth,curPixel,line));
 									dPrintf(("Drawing %d @ (%d, %d)\n",stopPixel - curPixel,curPixel,line));
 									while(curPixel < stopPixel){
@@ -269,7 +276,7 @@ void render(PaletteRef *raster, int lineWidth, int numLines, const rb_red_blk_tr
 	}
 }
 
-double roundOwn(double x){
+int roundOwn(double x){
 	double intpart,
 	fractpart = modf(x, &intpart),
 	delta = ((fabs(fractpart) < 0.5) ? 0 : 1) * ((x < 0) ? -1 : 1);

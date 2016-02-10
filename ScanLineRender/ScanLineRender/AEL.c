@@ -9,6 +9,8 @@
 #include "AEL.h"
 #include "debugConfig.h"
 
+int roundOwn(double x);
+
 float getMinXForLine(const EdgeListEntry * node, const int scanLine){
 	Point **const coords = node->edge;
 	const Point *const start = coords[START],
@@ -111,7 +113,7 @@ void stepEdges(ActiveEdgeList *ael, const rb_red_blk_tree* activePrims){
 				mnY = min(sy, ey),
 				mxY = max(sy, ey);
 				const bool singleton = prim->arity == 1;
-				if((mnY == scanLine && (sy != ey || (singleton /* newEdge.isSingleton() */)))
+				if((roundOwn(mnY) == scanLine && (!CLOSE_ENOUGH(sy,ey) || (singleton /* newEdge.isSingleton() */)))
 				   || (scanLine == 0 && mnY < 0 && mxY > 0)){
 					LinkN* newEdge = makeLinkEZ(e, prim);
 #ifndef NDEBUG

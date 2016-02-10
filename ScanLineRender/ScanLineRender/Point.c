@@ -26,9 +26,9 @@ void negated(const Point *p, Point *o){
 }
 
 bool pointsEqual(const Point *p, const Point *q){
-	return (p->x == q->x)
-	&& (p->y == q->y)
-	&& (p->z == q->z);
+	return CLOSE_ENOUGH(p->x, q->x)
+	&& CLOSE_ENOUGH(p->y, q->y)
+	&& CLOSE_ENOUGH(p->z, q->z);
 }
 
 float dot(const Point *p, const Point *q){

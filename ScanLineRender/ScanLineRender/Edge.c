@@ -73,7 +73,7 @@ bool contains(const Edge e, const Point *p){
 	bool ret = false;
 	for(i = START; i <= END; ++i ){
 		const Point* coord = e[i];
-		if(coord->x == p->x && coord->y == p->y){
+		if(CLOSE_ENOUGH(coord->x, p->x) && CLOSE_ENOUGH(coord->y, p->y) && CLOSE_ENOUGH(coord->z, p->z)){
 			ret = true; break;
 		}
 	}

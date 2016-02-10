@@ -522,6 +522,7 @@
 					"-Werror=implicit-function-declaration",
 					"-Werror=missing-prototypes",
 					"-Werror=return-type",
+					"-Wfloat-equal",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/CE-Algorithms/src";
@@ -545,6 +546,7 @@
 					"-Werror=implicit-function-declaration",
 					"-Werror=missing-prototypes",
 					"-Werror=return-type",
+					"-Wfloat-equal",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/CE-Algorithms/src";

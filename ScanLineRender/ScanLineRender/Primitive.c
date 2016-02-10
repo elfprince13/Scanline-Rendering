@@ -69,8 +69,8 @@ float getZForXY(const Primitive *p, float x, float y){
 		 // we'll average for robustness */
 		const float xNumer = dz * (x - sx),
 		yNumer = dz * (y - sy);
-		const float xEst = (dx == 0) ? min(0,  dz) : (xNumer / dx),
-		yEst = (dy == 0) ? min(0,  dz) : (yNumer / dy);
+		const float xEst = CLOSE_ENOUGH(dx, 0) ? min(0,  dz) : (xNumer / dx),
+		yEst = CLOSE_ENOUGH(dy, 0) ? min(0,  dz) : (yNumer / dy);
 		
 		ret = sz + (xEst + yEst) / 2;
 	} else {
@@ -98,7 +98,7 @@ float getZForXY(const Primitive *p, float x, float y){
 		-nz * us->z,
 		numer = (-d - nx * x - ny * y);
 		
-		ret = (nz == 0) ? ((numer > 0) ? HUGE_VAL : -HUGE_VAL) : (numer / nz) ;
+		ret = CLOSE_ENOUGH(nz, 0) ? ((numer > 0) ? HUGE_VAL : -HUGE_VAL) : (numer / nz) ;
 	}
 	return ret;
 }

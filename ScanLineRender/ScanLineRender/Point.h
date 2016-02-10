@@ -13,6 +13,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <math.h>
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 
@@ -24,6 +25,10 @@ typedef struct {
 
 #define FLOATBITS(f) (*(int32_t*)&(f))
 #define HASH_POINT(p) (FLOATBITS((p).x) ^ FLOATBITS((p).y) ^ FLOATBITS((p).z))
+
+/* Experimentally, this is about the right tolerance */
+#define PT_EPS 0.00001
+#define CLOSE_ENOUGH(a, b) (fabs((a) - (b)) < PT_EPS)
 
 const Point origin(void);
 
