@@ -65,9 +65,9 @@ void yprToTrans(const YPRTrans* ypr, RotMat o){
 	const float yaw = ypr->yaw,
 	pitch = ypr->pitch,
 	roll = ypr->roll,
-	c1 = cos(yaw), s1 = sin(yaw),
-	c2 = cos(pitch), s2 = sin(pitch),
-	c3 = cos(roll), s3 = sin(roll);
+	c1 = cos(yaw),	s1 = sin(yaw),
+	c2 = cos(pitch),s2 = sin(pitch),
+	c3 = cos(roll),	s3 = sin(roll);
 	
 	INIT_POINT(o[0], c1*c3 + s1*s2*s3, c3*s1*s2 - c1*s3, c2*s1);
 	INIT_POINT(o[1], c2*s3, c2*c3, -s2);
