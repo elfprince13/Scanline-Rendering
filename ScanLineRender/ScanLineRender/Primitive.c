@@ -55,7 +55,7 @@ float getZForXY(const Primitive *p, float x, float y){
 	float ret;
 	if(p->arity == 1){
 		const Point *const vs = boundary[START],
-		* ve = boundary[END];
+		*const ve = boundary[END];
 		
 		const float sx = vs->x,
 		sy = vs->y,
@@ -74,20 +74,16 @@ float getZForXY(const Primitive *p, float x, float y){
 		
 		ret = sz + (xEst + yEst) / 2;
 	} else {
-		Point **const e1 = boundary,
-		**const e2 = e1 + 1;
-		
-		const Point * us = e1[START],
-		* ue = e1[END],
-		* vs = e2[START],
-		* ve = e2[END];
-		
-		const float ux = us->x - ue->x,
-		uy = us->y - ue->y,
-		uz = us->z - ue->z,
-		vx = vs->x - ve->x,
-		vy = vs->y - ve->y,
-		vz = vs->z - ve->z;
+		const Point *const a = boundary[0],
+		*const b = boundary[1],
+		*const c = boundary[2];
+		/* 2 vectors in the plane */
+		const float ux = a->x - b->x,
+		uy = a->y - b->y,
+		uz = a->z - b->z,
+		vx = c->x - b->x,
+		vy = c->y - b->y,
+		vz = c->z - b->z;
 		
 		const float nx = uy * vz - uz * vy,
 		ny = uz * vx - ux * vz,
