@@ -67,6 +67,8 @@ float fastinvsqrt( float number )
 	return y;
 }
 
+static void clampInBoundary(const Primitive *p, float *x, float *y);
+
 float getZForXY(const Primitive *p, float x, float y){
 	Point **const boundary = p->boundary;
 	float ret;
@@ -111,6 +113,7 @@ float getZForXY(const Primitive *p, float x, float y){
 		ny /= ninvm;
 		nz /= ninvm;
 		
+		clampInBoundary(p, &x, &y);
 		{
 			/* d coefficient: nx * x + ny * y + nz * z + d = 0 */
 			const float minusD = nx * a->x + ny * a->y + nz * a->z,
@@ -120,6 +123,54 @@ float getZForXY(const Primitive *p, float x, float y){
 
 	}
 	return ret;
+}
+
+void clampInBoundary(const Primitive *p, float *x, float *y){
+	/*
+	 * Points p1, p2, p3 will produce barycentric coordinates l1, l2, l3.
+	 * Since the p1p3 edge is the interior edge, the l2 coordinate can be ignored
+	 * But we'll swap these, to save arithmetic, to avoid ever computing l2 explicitly.
+	 */
+	/*
+	 * Precondition: p has arity 3 or greater.
+	 */
+	Point **const boundary = p->boundary;
+	float lx = *x, ly = *y;
+	size_t i;
+	const size_t maxI = p->arity - 2;
+	for(i = 0; i <= maxI; i++){
+		const Point *const p1 = boundary[0],
+		*const p3 = boundary[1],
+		*const p2 = boundary[2]; /* This swap is intentional */
+		const float
+		x1 = p1->x, y1 = p1->y,
+		x3 = p3->x, y3 = p3->y,
+		x2 = p2->x, y2 = p2->y,
+		dY23 = y2 - y3,
+		dX32 = x3 - x2,
+		dX13 = x1 - x3,
+		dXL3 = lx - x3,
+		dYL3 = ly - y3,
+		dY13 = y1 - y3,
+		det = (dY23 * dX13 + dX32 * dY13);
+		float l1 = (dY23 * dXL3 + dX32 * dYL3) / det,
+		l2 = (dX13 * dYL3 - dY13 * dXL3) / det;
+		bool upd = false;
+		if(l1 < 0){
+			l1 = 0.1; upd = true;
+		}
+		if(l2 < 0){
+			l2 = 0.1; upd = true;
+		}
+		if(upd){
+			float l3 = 1 - l1 - l2;
+			lx = l1*x1 + l2*x2 + l3*x3;
+			ly = l1*y1 + l2*y2 + l3*y3;
+			break;
+		}
+	}
+	*x = lx;
+	*y = ly;
 }
 
 

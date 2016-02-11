@@ -196,7 +196,7 @@ void render(PaletteRef *raster, int lineWidth, int numLines, const rb_red_blk_tr
 							for(node = inFlags.tree.first; node != inFlags.tree.sentinel; node = TreeSuccessor((rb_red_blk_tree*)(&inFlags), node)) {
 								const Primitive *prim = node->key;
 								/* We need sub-pixel accuracy */
-								const float testZ = getZForXY(prim, max(curPixel, getMinXForLine(((rb_red_blk_map_node*)node)->info,line)), line);
+								const float testZ = getZForXY(prim, curPixel, line);
 								if(testZ <= bestZ + PT_EPS){
 									dPrintf(("\t\tHit: %f <= %f for %s\n",testZ, bestZ, fmtColor(prim->color)));
 									if (CLOSE_ENOUGH(testZ, bestZ)) {
