@@ -225,7 +225,7 @@ void render(PaletteRef *raster, int lineWidth, int numLines, const rb_red_blk_tr
 									const int drawWidth =  (zFight || solitary) ? 1 : ((nextEdge ? nextX : lineWidth) - curPixel),
 									stopPixel = curPixel + min(lineWidth - curPixel,
 															   max(0, drawWidth));
-									const Color drawColor = /*(uint16_t)roundOwn(63 * bestZ / 100) << 5;*/decodeColor(curDraw->color);
+									const PaletteRef drawColor = /*(uint16_t)roundOwn(63 * bestZ / 100) << 5;*/decodeColor(curDraw->color);
 									dPrintf(("Drawing %d @ (%d, %d)\n",drawWidth,curPixel,line));
 									dPrintf(("Drawing %d @ (%d, %d)\n",stopPixel - curPixel,curPixel,line));
 									while(curPixel < stopPixel){
