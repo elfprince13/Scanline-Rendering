@@ -21,11 +21,11 @@ static int topToBottom(const Primitive *, const Primitive *);
 static int pointerDiff(const Primitive*, const Primitive*);
 static StatelessCompF topToBottomF = (StatelessCompF)(&topToBottom);
 static StatelessCompF pointerDiffF = (StatelessCompF)(&pointerDiff);
-static float topMostPrimPoint(const Primitive *);
-static float bottomMostPrimPoint(const Primitive *);
+static float topMostPoint(const Primitive *);
+static float bottomMostPoint(const Primitive *);
 #ifndef NDEBUG
-static float rightMostPrimPoint(const Primitive *);
-static float leftMostPrimPoint(const Primitive *);
+static float rightMostPoint(const Primitive *);
+static float leftMostPoint(const Primitive *);
 #endif
 
 void transformData(const Transformation *txForm, const Point *srcGeometry, Point *dstGeometry, size_t pointCount){
@@ -57,11 +57,11 @@ rb_red_blk_tree* bucketPrims(rb_red_blk_tree* buckets, int numLines, Primitive *
 	qsort(geometry, geomCount, sizeof(Primitive), topToBottomF);
 	for(i = 0; i < geomCount; ++i){
 		Primitive *prim = geometry + i;
-		const int pScanLine = roundOwn(bottomMostPrimPoint(prim));
-		if(pScanLine < numLines && (pScanLine >= 0 || topMostPrimPoint(prim) >= 0)){
+		const int pScanLine = roundOwn(bottomMostPoint(prim));
+		if(pScanLine < numLines && (pScanLine >= 0 || topMostPoint(prim) >= 0)){
 			rb_red_blk_tree *const dstBucket = buckets + max(0, pScanLine);
 			RBSetAdd(dstBucket, prim);
-			dPrintf(("dstBucket " SZF " gets geometry with arity " SZF " begins on %f and ends on %f and now has size " SZF "\n", dstBucket - buckets, prim->arity, bottomMostPrimPoint(prim), topMostPrimPoint(prim), dstBucket->size));
+			dPrintf(("dstBucket " SZF " gets geometry with arity " SZF " begins on %f and ends on %f and now has size " SZF "\n", dstBucket - buckets, prim->arity, bottomMostPoint(prim), topMostPoint(prim), dstBucket->size));
 		}
 	}
 	
@@ -94,12 +94,12 @@ void render(PaletteRef *raster, int lineWidth, int numLines, const rb_red_blk_tr
 			dPrintf(("\tUpdating activePrimSet\n"));
 			for (primIt = activePrimSet.first; primIt != activePrimSet.sentinel; (p = primIt), (primIt = nextP)) {
 				const Primitive* prim = primIt->key;
-				const int top = roundOwn(topMostPrimPoint(prim));
+				const int top = roundOwn(topMostPoint(prim));
 				nextP = TreeSuccessor(&activePrimSet, primIt);
 				if(top < line){
 #ifndef NDEBUG
 					{
-						const int bottom = roundOwn(bottomMostPrimPoint(prim));
+						const int bottom = roundOwn(bottomMostPoint(prim));
 						dPrintf(("\t\t%d -> %d ( %s ) is not valid here: %d\n",top,bottom,fmtColor(prim->color), line));
 					}
 #endif
@@ -114,8 +114,8 @@ void render(PaletteRef *raster, int lineWidth, int numLines, const rb_red_blk_tr
 					Primitive * prim = node->key;
 #ifndef NDEBUG
 					{
-						const int top = roundOwn(topMostPrimPoint(prim)),
-						bottom = roundOwn(bottomMostPrimPoint(prim));
+						const int top = roundOwn(topMostPoint(prim)),
+						bottom = roundOwn(bottomMostPoint(prim));
 						dPrintf(("\t\t%d -> %d ( %s ) is added here: %d\n",top,bottom,fmtColor(prim->color), line));
 					}
 #endif
@@ -293,33 +293,33 @@ int pointerDiff(const Primitive *p1, const Primitive *p2){
 }
 
 int topToBottom(const Primitive *p1, const Primitive *p2){
-	float delta = topMostPrimPoint(p1) - topMostPrimPoint(p2);
+	float delta = topMostPoint(p1) - topMostPoint(p2);
 #ifndef NDEBUG
-	if(!delta) delta = bottomMostPrimPoint(p1) - bottomMostPrimPoint(p2);
-	if(!delta) delta = leftMostPrimPoint(p1) - leftMostPrimPoint(p2);
-	if(!delta) delta = rightMostPrimPoint(p1) - rightMostPrimPoint(p2);
+	if(!delta) delta = bottomMostPoint(p1) - bottomMostPoint(p2);
+	if(!delta) delta = leftMostPoint(p1) - leftMostPoint(p2);
+	if(!delta) delta = rightMostPoint(p1) - rightMostPoint(p2);
 	if(!delta) delta = p1->arity - p2->arity;
 	if(!delta) delta = p1->color - p2->color;
 #endif
 	return delta ? (delta > 0 ? 1 : -1) : 0;
 }
 
-float topMostPrimPoint(const Primitive *prim){
+float topMostPoint(const Primitive *prim){
 	Point **const boundary = prim->boundary;
 	const size_t arity = prim->arity;
-	size_t i; float top;
-	for(top = boundary[0]->y,i = 1; i < arity; ++i){
+	size_t i; float top = -HUGE_VAL;
+	for(i = 0; i < arity; ++i){
 		const float candidate = boundary[i]->y;
 		if(candidate > top) top = candidate;
 	}
 	return top;
 }
 
-float bottomMostPrimPoint(const Primitive *prim){
+float bottomMostPoint(const Primitive *prim){
 	Point **const boundary = prim->boundary;
 	const size_t arity = prim->arity;
-	size_t i; float bottom;
-	for(bottom = boundary[0]->y,i = 1; i < arity; ++i){
+	size_t i; float bottom = HUGE_VAL;
+	for(i = 0; i < arity; ++i){
 		const float candidate = boundary[i]->y;
 		if(candidate < bottom) bottom = candidate;
 	}
@@ -327,25 +327,25 @@ float bottomMostPrimPoint(const Primitive *prim){
 }
 
 #ifndef NDEBUG
-float rightMostPrimPoint(const Primitive *prim){
+float rightMostPoint(const Primitive *prim){
 	Point **const boundary = prim->boundary;
 	const size_t arity = prim->arity;
-	size_t i; float top;
-	for(top = boundary[0]->x,i = 1; i < arity; ++i){
+	size_t i; float right = -HUGE_VAL;
+	for(i = 0; i < arity; ++i){
 		const float candidate = boundary[i]->x;
-		if(candidate > top) top = candidate;
+		if(candidate > right) right = candidate;
 	}
-	return top;
+	return right;
 }
 
-float leftMostPrimPoint(const Primitive *prim){
+float leftMostPoint(const Primitive *prim){
 	Point **const boundary = prim->boundary;
 	const size_t arity = prim->arity;
-	size_t i; float bottom;
-	for(bottom = boundary[0]->x,i = 1; i < arity; ++i){
+	size_t i; float left = HUGE_VAL;
+	for(i = 0; i < arity; ++i){
 		const float candidate = boundary[i]->x;
-		if(candidate < bottom) bottom = candidate;
+		if(candidate < left) left = candidate;
 	}
-	return bottom;
+	return left;
 }
 #endif
